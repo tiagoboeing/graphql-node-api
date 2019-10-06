@@ -1,0 +1,27 @@
+{
+  "name": "graphql-node-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiagoboeing/graphql-node-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tiagoboeing/graphql-node-api/issues"
+  },
+  "homepage": "https://github.com/tiagoboeing/graphql-node-api#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-clean": "^0.4.0",
+    "gulp-typescript": "^5.0.1",
+    "nodemon": "^1.19.3",
+    "typescript": "^3.6.3"
+  }
+}
