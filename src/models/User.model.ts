@@ -1,13 +1,12 @@
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import {
-  BLOB,
   CreateOptions,
   DataTypeAbstract,
-  INTEGER,
   Model,
   Sequelize,
   STRING
 } from 'sequelize';
+import { DataType } from 'sequelize-typescript';
 import { BaseModelInterface } from '../interfaces/BaseModelInterface';
 
 export interface UserAttributes {
@@ -18,7 +17,7 @@ export interface UserAttributes {
   photo?: string;
 }
 
-export interface UserInstance extends Sequelize, UserAttributes {
+export interface UserInstance extends Model<UserAttributes> {
   isPassword(encodedPassword: string, password: string): boolean;
 }
 
@@ -28,23 +27,23 @@ export interface UserModel
 
 export default (
   sequelize: Sequelize,
-  DataTypes: DataTypeAbstract
+  _DataTypes: DataTypeAbstract
 ): UserModel => {
-  const user = <UserModel>(<UserAttributes>sequelize.define(
+  const user = (<UserAttributes>sequelize.define(
     'User',
     {
       id: {
-        type: INTEGER,
+        type: DataType.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
       },
       name: {
-        type: STRING(128),
+        type: DataType.STRING(128),
         allowNull: false
       },
       email: {
-        type: STRING(128),
+        type: DataType.STRING(128),
         allowNull: false,
         unique: true
       },
@@ -56,7 +55,7 @@ export default (
         }
       },
       photo: {
-        type: BLOB({ length: 'long' }),
+        type: DataType.BLOB({ length: 'long' }),
         allowNull: true,
         defaultValue: null
       }
@@ -73,7 +72,7 @@ export default (
         }
       }
     }
-  ));
+  )) as UserModel;
 
   user.prototype.isPassword = (
     encodedPassword: string,

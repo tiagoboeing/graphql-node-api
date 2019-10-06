@@ -2,20 +2,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcryptjs_1 = require("bcryptjs");
 const sequelize_1 = require("sequelize");
-exports.default = (sequelize, DataTypes) => {
+const sequelize_typescript_1 = require("sequelize-typescript");
+exports.default = (sequelize, _DataTypes) => {
     const user = sequelize.define('User', {
         id: {
-            type: sequelize_1.INTEGER,
+            type: sequelize_typescript_1.DataType.INTEGER,
             allowNull: false,
             primaryKey: true,
             autoIncrement: true
         },
         name: {
-            type: sequelize_1.STRING(128),
+            type: sequelize_typescript_1.DataType.STRING(128),
             allowNull: false
         },
         email: {
-            type: sequelize_1.STRING(128),
+            type: sequelize_typescript_1.DataType.STRING(128),
             allowNull: false,
             unique: true
         },
@@ -27,7 +28,7 @@ exports.default = (sequelize, DataTypes) => {
             }
         },
         photo: {
-            type: sequelize_1.BLOB({ length: 'long' }),
+            type: sequelize_typescript_1.DataType.BLOB({ length: 'long' }),
             allowNull: true,
             defaultValue: null
         }
