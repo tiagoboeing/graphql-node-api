@@ -12,7 +12,10 @@ class App {
         this.middleware();
     }
     middleware() {
-        this.express.use('/graphql', express_graphql_1.default({ schema: schema_1.default, graphiql: process.env.NODE_ENV === 'development' }));
+        this.express.use('/graphql', express_graphql_1.default({ schema: schema_1.default, graphiql: this.isDevelopment() }));
+    }
+    isDevelopment() {
+        return process.env.NODE_ENV === 'development';
     }
 }
 exports.default = new App().express;

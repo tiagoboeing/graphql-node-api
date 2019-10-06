@@ -1,5 +1,4 @@
 import express from 'express';
-import { Request, Response, NextFunction } from 'express-serve-static-core';
 import graphqlHTTP from 'express-graphql';
 import schema from './graphql/schema';
 class App {
@@ -13,8 +12,12 @@ class App {
   private middleware(): void {
     this.express.use(
       '/graphql',
-      graphqlHTTP({ schema, graphiql: process.env.NODE_ENV === 'development' })
+      graphqlHTTP({ schema, graphiql: this.isDevelopment() })
     );
+  }
+
+  private isDevelopment() {
+    return process.env.NODE_ENV === 'development';
   }
 }
 
