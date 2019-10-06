@@ -31,11 +31,6 @@ const typeDefs = `
 `;
 
 const resolvers = {
-  User: {
-    id: (user: any) => user.id,
-    name: (user: any) => user.name,
-    email: (user: any) => user.email
-  },
   Query: {
     allUsers: () => users
   },
