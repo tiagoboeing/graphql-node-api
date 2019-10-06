@@ -2,8 +2,10 @@
   "name": "graphql-node-api",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon --delay 2 dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,10 +20,15 @@
   },
   "homepage": "https://github.com/tiagoboeing/graphql-node-api#readme",
   "devDependencies": {
+    "@types/express": "^4.17.1",
+    "@types/node": "^12.7.11",
     "gulp": "^4.0.2",
     "gulp-clean": "^0.4.0",
     "gulp-typescript": "^5.0.1",
     "nodemon": "^1.19.3",
     "typescript": "^3.6.3"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }
