@@ -1,6 +1,7 @@
 import express from 'express';
 import graphqlHTTP from 'express-graphql';
 import schema from './graphql/schema';
+import db from './models';
 class App {
   public express: express.Application;
 
@@ -12,7 +13,16 @@ class App {
   private middleware(): void {
     this.express.use(
       '/graphql',
-      graphqlHTTP({ schema, graphiql: this.isDevelopment() })
+      (req: any, _res: any, next: any) => {
+        req['context'] = {};
+        req['context'].db = db;
+        next();
+      },
+      graphqlHTTP((req: any) => ({
+        schema,
+        graphiql: this.isDevelopment(),
+        context: req['context']
+      }))
     );
   }
 
