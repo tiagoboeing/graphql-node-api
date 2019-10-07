@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
 exports.default = (sequelize, _DataTypes) => {
-    const comment = sequelize.define('Post', {
+    const comment = sequelize.define('Comment', {
         id: {
             type: sequelize_typescript_1.DataType.INTEGER,
             allowNull: false,

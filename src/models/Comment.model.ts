@@ -22,7 +22,7 @@ export default (
   _DataTypes: DataTypeAbstract
 ): CommentModel => {
   const comment: any = (<CommentAttributes>sequelize.define(
-    'Post',
+    'Comment',
     {
       id: {
         type: DataType.INTEGER,

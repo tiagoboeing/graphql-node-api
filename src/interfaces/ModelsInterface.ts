@@ -3,7 +3,7 @@ import { UserModel } from '../models/User.model';
 import { CommentModel } from '../models/Comment.model';
 
 export interface ModelsInterface {
-  Comment: CommentModel;
   Post: PostModel;
   User: UserModel;
+  Comment: CommentModel;
 }
