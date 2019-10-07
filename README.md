@@ -2,9 +2,8 @@
 
 ## development
 
-To development run
-
-`npm run dev`
+- To watch files run `gulp`
+- To development run `npm run dev`
 
 If prefer, in Linux or MacOS you can change `package.json` script tag `dev` from:
 

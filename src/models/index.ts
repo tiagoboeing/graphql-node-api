@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { Sequelize } from 'sequelize-typescript';
+import * as Sequelize from 'sequelize';
 import { DbConnection } from '../interfaces/DbConnectionInterface';
 
 const basename: string = path.basename(module.filename);
@@ -10,7 +10,11 @@ let db: any = null;
 
 if (!db) {
   db = {};
-  const sequelize: Sequelize = new Sequelize(
+  const operatorsAliases = {
+    $in: Sequelize.Op.in
+  };
+  config = Object.assign({ operatorsAliases }, config);
+  const sequelize: Sequelize.Sequelize = new Sequelize.Sequelize(
     config.database,
     config.username,
     config.password,
@@ -31,6 +35,8 @@ if (!db) {
   Object.keys(db).forEach((modelName: string) => {
     if (db[modelName].associate) db[modelName].associate(db);
   });
+
+  db['sequelize'] = sequelize;
 }
 
 export default <DbConnection>db;
