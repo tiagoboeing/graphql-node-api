@@ -3,7 +3,7 @@
 ## development
 
 - To watch files run `gulp`
-- To development run `npm run dev`
+- To development or run local, execute after starts gulp: `npm run dev`
 
 If prefer, in Linux or MacOS you can change `package.json` script tag `dev` from:
 
