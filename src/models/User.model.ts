@@ -1,13 +1,8 @@
-import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
-import {
-  CreateOptions,
-  DataTypeAbstract,
-  Model,
-  Sequelize,
-  STRING
-} from 'sequelize';
-import { DataType } from 'sequelize-typescript';
+import * as Sequelize from 'sequelize';
+import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
+
 import { BaseModelInterface } from '../interfaces/BaseModelInterface';
+import { ModelsInterface } from '../interfaces/ModelsInterface';
 
 export interface UserAttributes {
   id?: number;
@@ -15,47 +10,53 @@ export interface UserAttributes {
   email?: string;
   password?: string;
   photo?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export interface UserInstance extends Model<UserAttributes> {
+export interface UserInstance
+  extends Sequelize.Instance<UserAttributes>,
+    UserAttributes {
   isPassword(encodedPassword: string, password: string): boolean;
 }
 
 export interface UserModel
   extends BaseModelInterface,
-    Model<UserInstance, UserAttributes> {}
+    Sequelize.Model<UserInstance, UserAttributes> {}
 
 export default (
-  sequelize: Sequelize,
-  _DataTypes: DataTypeAbstract
+  sequelize: Sequelize.Sequelize,
+  DataTypes: Sequelize.DataTypes
 ): UserModel => {
-  const user = (<UserAttributes>sequelize.define(
+  const User: UserModel = sequelize.define(
     'User',
     {
       id: {
-        type: DataType.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
       },
       name: {
-        type: DataType.STRING(128),
+        type: DataTypes.STRING(128),
         allowNull: false
       },
       email: {
-        type: DataType.STRING(128),
+        type: DataTypes.STRING(128),
         allowNull: false,
         unique: true
       },
       password: {
-        type: STRING(128),
+        type: DataTypes.STRING(128),
         allowNull: false,
         validate: {
           notEmpty: true
         }
       },
       photo: {
-        type: DataType.BLOB({ length: 'long' }),
+        type: DataTypes.BLOB({
+          length: 'long'
+        }),
         allowNull: true,
         defaultValue: null
       }
@@ -64,20 +65,33 @@ export default (
       tableName: 'users',
       hooks: {
         beforeCreate: (
-          user: UserInstance | any,
-          _options: CreateOptions
+          user: UserInstance,
+          options: Sequelize.CreateOptions
         ): void => {
           const salt = genSaltSync();
           user.password = hashSync(user.password, salt);
+        },
+        beforeUpdate: (
+          user: UserInstance,
+          options: Sequelize.CreateOptions
+        ): void => {
+          if (user.changed('password')) {
+            const salt = genSaltSync();
+            user.password = hashSync(user.password, salt);
+          }
         }
       }
     }
-  )) as UserModel;
+  );
 
-  user.prototype.isPassword = (
+  User.associate = (models: ModelsInterface): void => {};
+
+  User.prototype.isPassword = (
     encodedPassword: string,
     password: string
-  ): boolean => compareSync(password, encodedPassword);
+  ): boolean => {
+    return compareSync(password, encodedPassword);
+  };
 
-  return user;
+  return User;
 };

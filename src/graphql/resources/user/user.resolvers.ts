@@ -5,9 +5,9 @@ import { UserInstance } from '../../../models/User.model';
 export const userResolvers = {
   Query: {
     users: (
-      parent: any,
-      { first = 10, offset = 0 }: any,
-      { db }: { db: DbConnection | any },
+      parent,
+      { first = 10, offset = 0 },
+      { db }: { db: DbConnection },
       info: GraphQLResolveInfo
     ) => {
       return db.User.findAll({
@@ -17,9 +17,9 @@ export const userResolvers = {
     },
 
     user: (
-      parent: any,
+      parent,
       { id }: any,
-      { db }: { db: DbConnection | any },
+      { db }: { db: DbConnection },
       info: GraphQLResolveInfo
     ) => {
       return db.User.findById(id).then((user: UserInstance) => {

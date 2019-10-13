@@ -4,28 +4,24 @@ const ts = require('gulp-typescript');
 
 const tsProject = ts.createProject('tsconfig.json');
 
-// call TS compiler and add generated code in dist folder
-function scripts() {
+gulp.task('scripts', ['static'], () => {
   const tsResult = tsProject.src().pipe(tsProject());
+
   return tsResult.js.pipe(gulp.dest('dist'));
-}
+});
 
-// copy .json files from src to dist directory
-function static() {
+gulp.task('static', ['clean'], () => {
   return gulp.src(['src/**/*.json']).pipe(gulp.dest('dist'));
-}
+});
 
-function cleanDist() {
+gulp.task('clean', () => {
   return gulp.src('dist').pipe(clean());
-}
+});
 
-function watch() {
-  return gulp.watch(
-    ['src/**/*.ts', 'src/**/*.json'],
-    gulp.series(static, scripts)
-  );
-}
+gulp.task('build', ['scripts']);
 
-const build = gulp.series(cleanDist, gulp.parallel(static, scripts), watch);
+gulp.task('watch', ['build'], () => {
+  return gulp.watch(['src/**/*.ts', 'src/**/*.json'], ['build']);
+});
 
-exports.default = build;
+gulp.task('default', ['watch']);

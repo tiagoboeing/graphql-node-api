@@ -1,5 +1,5 @@
-import { DataTypeAbstract, Model, Sequelize } from 'sequelize';
-import { DataType, BelongsTo } from 'sequelize-typescript';
+import * as Sequelize from 'sequelize';
+
 import { BaseModelInterface } from '../interfaces/BaseModelInterface';
 import { ModelsInterface } from '../interfaces/ModelsInterface';
 
@@ -13,45 +13,47 @@ export interface PostAttributes {
   updatedAt?: string;
 }
 
-export interface PostInstance extends Model<PostAttributes> {}
+export interface PostInstance extends Sequelize.Instance<PostAttributes> {}
 
 export interface PostModel
   extends BaseModelInterface,
-    Model<PostInstance, PostAttributes> {}
+    Sequelize.Model<PostInstance, PostAttributes> {}
 
 export default (
-  sequelize: Sequelize,
-  _DataTypes: DataTypeAbstract
+  sequelize: Sequelize.Sequelize,
+  DataTypes: Sequelize.DataTypes
 ): PostModel => {
-  const post: any = (<PostAttributes>sequelize.define(
+  const Post: PostModel = sequelize.define(
     'Post',
     {
       id: {
-        type: DataType.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
       },
       title: {
-        type: DataType.STRING,
+        type: DataTypes.STRING,
         allowNull: false
       },
       content: {
-        type: DataType.TEXT,
+        type: DataTypes.TEXT,
         allowNull: false
       },
       photo: {
-        type: DataType.BLOB({ length: 'long' }),
+        type: DataTypes.BLOB({
+          length: 'long'
+        }),
         allowNull: false
       }
     },
     {
       tableName: 'posts'
     }
-  )) as PostModel;
+  );
 
-  post.associate = (models: ModelsInterface): void => {
-    BelongsTo(models.Post.prototype, {
+  Post.associate = (models: ModelsInterface): void => {
+    Post.belongsTo(models.User, {
       foreignKey: {
         allowNull: false,
         field: 'author',
@@ -60,5 +62,5 @@ export default (
     });
   };
 
-  return post;
+  return Post;
 };

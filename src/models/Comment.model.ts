@@ -1,47 +1,49 @@
-import { DataTypeAbstract, Model, Sequelize } from 'sequelize';
-import { BelongsTo, DataType } from 'sequelize-typescript';
+import * as Sequelize from 'sequelize';
+
 import { BaseModelInterface } from '../interfaces/BaseModelInterface';
 import { ModelsInterface } from '../interfaces/ModelsInterface';
 
 export interface CommentAttributes {
-  id?: string;
+  id?: number;
+  comment?: string;
   post?: number;
   user?: number;
   createdAt?: string;
-  updateAt?: string;
+  updatedAt?: string;
 }
 
-export interface CommentInstance extends Model<CommentAttributes> {}
+export interface CommentInstance
+  extends Sequelize.Instance<CommentAttributes> {}
 
 export interface CommentModel
   extends BaseModelInterface,
-    Model<CommentInstance, CommentAttributes> {}
+    Sequelize.Model<CommentInstance, CommentAttributes> {}
 
 export default (
-  sequelize: Sequelize,
-  _DataTypes: DataTypeAbstract
+  sequelize: Sequelize.Sequelize,
+  DataTypes: Sequelize.DataTypes
 ): CommentModel => {
-  const comment: any = (<CommentAttributes>sequelize.define(
+  const Comment: CommentModel = sequelize.define(
     'Comment',
     {
       id: {
-        type: DataType.INTEGER,
-        allowNull: false,
+        type: DataTypes.INTEGER,
         primaryKey: true,
+        allowNull: false,
         autoIncrement: true
       },
       comment: {
-        type: DataType.TEXT,
+        type: DataTypes.TEXT,
         allowNull: false
       }
     },
     {
       tableName: 'comments'
     }
-  )) as CommentModel;
+  );
 
-  comment.associate = (models: ModelsInterface): void => {
-    BelongsTo(models.Post.prototype, {
+  Comment.associate = (models: ModelsInterface): void => {
+    Comment.belongsTo(models.Post, {
       foreignKey: {
         allowNull: false,
         field: 'post',
@@ -49,7 +51,7 @@ export default (
       }
     });
 
-    BelongsTo(models.User.prototype, {
+    Comment.belongsTo(models.User, {
       foreignKey: {
         allowNull: false,
         field: 'user',
@@ -58,5 +60,5 @@ export default (
     });
   };
 
-  return comment;
+  return Comment;
 };
