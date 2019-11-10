@@ -31,6 +31,7 @@ export const userResolvers = {
     },
 
     user: (_parent, { id }: any, { db }: { db: DbConnection }) => {
+      id = parseInt(id);
       return db.User.findById(id)
         .then((user: UserInstance) => {
           if (!user) throw new Error(`User with id ${id} not found!`);

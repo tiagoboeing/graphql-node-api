@@ -1,7 +1,6 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { Transaction } from 'sequelize';
 import { DbConnection } from '../../../interfaces/DbConnectionInterface';
 import { CommentInstance } from '../../../models/Comment.model';
-import { Transaction } from 'sequelize';
 import { UserInstance } from '../../../models/User.model';
 import { handleError } from '../../../utils/utils';
 
@@ -22,6 +21,7 @@ export const commentResolvers = {
       { postId, first = 10, offset = 0 },
       { db }: { db: DbConnection }
     ) => {
+      postId = parseInt(postId);
       return db.Comment.findAll({
         where: { post: postId },
         limit: first,

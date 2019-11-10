@@ -32,6 +32,7 @@ export const postResolvers = {
     },
 
     post: (_post: PostInstance, { id }, { db }: { db: DbConnection }) => {
+      id = parseInt(id);
       return db.Post.findById(id)
         .then((post: PostInstance) => {
           if (!post) throw new Error(`Post with id ${id} not found`);
