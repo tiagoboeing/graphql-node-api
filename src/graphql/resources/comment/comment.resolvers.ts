@@ -1,6 +1,8 @@
 import { GraphQLResolveInfo } from 'graphql';
 import { DbConnection } from '../../../interfaces/DbConnectionInterface';
 import { CommentInstance } from '../../../models/Comment.model';
+import { Transaction } from 'sequelize';
+import { UserInstance } from '../../../models/User.model';
 
 export const commentResolvers = {
   Comment: {
@@ -23,6 +25,36 @@ export const commentResolvers = {
         where: { post: postId },
         limit: first,
         offset
+      });
+    }
+  },
+
+  Mutation: {
+    createComment: (_comment, { input }, { db }: { db: DbConnection }) => {
+      return db.sequelize.transaction((t: Transaction) => {
+        return db.Comment.create(input, { transaction: t });
+      });
+    },
+
+    updateComment: (_comment, { id, input }, { db }: { db: DbConnection }) => {
+      id = parseInt(id);
+      return db.sequelize.transaction((t: Transaction) => {
+        return db.Comment.findById(id).then((comment: UserInstance) => {
+          if (!comment) throw new Error(`Comment with id ${id} not found`);
+          return comment.update(input, { transaction: t });
+        });
+      });
+    },
+
+    deleteComment: (_comment, { id }, { db }: { db: DbConnection }) => {
+      id = parseInt(id);
+      return db.sequelize.transaction((t: Transaction) => {
+        return db.Comment.findById(id).then((comment: UserInstance) => {
+          if (!comment) throw new Error(`Comment with id ${id} not found`);
+          return comment
+            .destroy({ transaction: t })
+            .then((comment: any) => !!comment);
+        });
       });
     }
   }
