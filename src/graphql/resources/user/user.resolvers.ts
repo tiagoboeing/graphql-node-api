@@ -1,7 +1,7 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { Transaction } from 'sequelize';
 import { DbConnection } from '../../../interfaces/DbConnectionInterface';
 import { UserInstance } from '../../../models/User.model';
-import { Transaction } from 'sequelize';
+import { handleError } from '../../../utils/utils';
 
 export const userResolvers = {
   User: {
@@ -14,72 +14,82 @@ export const userResolvers = {
         where: { author: user.get('id') },
         limit: first,
         offset
-      });
+      }).catch(handleError);
     }
   },
 
   Query: {
     users: (
-      parent,
+      _parent,
       { first = 10, offset = 0 },
       { db }: { db: DbConnection }
     ) => {
       return db.User.findAll({
         limit: first,
         offset
-      });
+      }).catch(handleError);
     },
 
-    user: (parent, { id }: any, { db }: { db: DbConnection }) => {
-      return db.User.findById(id).then((user: UserInstance) => {
-        if (!user) throw new Error(`User with id ${id} not found!`);
-        return user;
-      });
+    user: (_parent, { id }: any, { db }: { db: DbConnection }) => {
+      return db.User.findById(id)
+        .then((user: UserInstance) => {
+          if (!user) throw new Error(`User with id ${id} not found!`);
+          return user;
+        })
+        .catch(handleError);
     }
   },
 
   Mutation: {
-    createUser: (parent, { input }, { db }: { db: DbConnection }) => {
-      return db.sequelize.transaction((t: Transaction) => {
-        return db.User.create(input, { transaction: t });
-      });
+    createUser: (_parent, { input }, { db }: { db: DbConnection }) => {
+      return db.sequelize
+        .transaction((t: Transaction) => {
+          return db.User.create(input, { transaction: t });
+        })
+        .catch(handleError);
     },
 
-    updateUser: (parent, { id, input }, { db }: { db: DbConnection }) => {
+    updateUser: (_parent, { id, input }, { db }: { db: DbConnection }) => {
       id = parseInt(id);
-      return db.sequelize.transaction((t: Transaction) => {
-        return db.User.findById(id).then((user: UserInstance) => {
-          if (!user) throw new Error(`User with id ${id} not found!`);
+      return db.sequelize
+        .transaction((t: Transaction) => {
+          return db.User.findById(id).then((user: UserInstance) => {
+            if (!user) throw new Error(`User with id ${id} not found!`);
 
-          return user.update(input, { transaction: t });
-        });
-      });
+            return user.update(input, { transaction: t });
+          });
+        })
+        .catch(handleError);
     },
 
     updateUserPassword: (
-      parent,
+      _parent,
       { id, input },
       { db }: { db: DbConnection }
     ) => {
       id = parseInt(id);
-      return db.sequelize.transaction((t: Transaction) => {
-        return db.User.findById(id).then((user: UserInstance) => {
-          if (!user) throw new Error(`User with id ${id} not found!`);
+      return db.sequelize
+        .transaction((t: Transaction) => {
+          return db.User.findById(id).then((user: UserInstance) => {
+            if (!user) throw new Error(`User with id ${id} not found!`);
 
-          return user
-            .update(input, { transaction: t })
-            .then((user: UserInstance) => !!user);
-        });
-      });
+            return user
+              .update(input, { transaction: t })
+              .then((user: UserInstance) => !!user);
+          });
+        })
+        .catch(handleError);
     },
 
-    deleteUser: (parent, { id, input }, { db }: { db: DbConnection }) => {
-      return db.sequelize.transaction((t: Transaction) => {
-        return db.User.findById(id).then((user: UserInstance) => {
-          if (!user) throw new Error(`User with id ${id} not found!`);
-          return user.destroy({ transaction: t }).then((user: any) => !!user);
-        });
-      });
+    deleteUser: (_parent, { id }, { db }: { db: DbConnection }) => {
+      return db.sequelize
+        .transaction((t: Transaction) => {
+          return db.User.findById(id).then((user: UserInstance) => {
+            if (!user) throw new Error(`User with id ${id} not found!`);
+            return user.destroy({ transaction: t }).then((user: any) => !!user);
+          });
+        })
+        .catch(handleError);
     }
   }
 };
